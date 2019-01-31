@@ -1,27 +1,19 @@
 package pl.tscript3r.dbdd.utility;
 
+import javax.net.ssl.*;
 import java.net.Socket;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509ExtendedTrustManager;
-
 /**
- * Disables SSL verification
+ * Disables SSL verification for all hosts
  * @author ADzierzon
  *
  */
-public class OpenTrustManager {
+class OpenTrustManager {
 
-	private static TrustManager[] trustAllCerts = new TrustManager[] { 
+	private static final TrustManager[] trustAllCerts = new TrustManager[] {
 		new X509ExtendedTrustManager() {
 			@Override
 			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
@@ -37,37 +29,28 @@ public class OpenTrustManager {
 			}
 	
 			@Override
-			public void checkClientTrusted(X509Certificate[] xcs, String string, Socket socket)
-					throws CertificateException {
+			public void checkClientTrusted(X509Certificate[] xcs, String string, Socket socket) {
 	
 			}
 	
 			@Override
-			public void checkServerTrusted(X509Certificate[] xcs, String string, Socket socket)
-					throws CertificateException {
+			public void checkServerTrusted(X509Certificate[] xcs, String string, Socket socket) {
 	
 			}
 	
 			@Override
-			public void checkClientTrusted(X509Certificate[] xcs, String string, SSLEngine ssle)
-					throws CertificateException {
+			public void checkClientTrusted(X509Certificate[] xcs, String string, SSLEngine ssle) {
 	
 			}
 	
 			@Override
-			public void checkServerTrusted(X509Certificate[] xcs, String string, SSLEngine ssle)
-					throws CertificateException {
+			public void checkServerTrusted(X509Certificate[] xcs, String string, SSLEngine ssle) {
 	
 			}
 		}
 	};
 
 
-	/**
-	 * Disables SSL verification for all hosts
-	 * @throws NoSuchAlgorithmException
-	 * @throws KeyManagementException
-	 */
     public static void apply() throws NoSuchAlgorithmException, KeyManagementException {
     	SSLContext sc = SSLContext.getInstance("SSL");
     	sc.init(null, trustAllCerts, new java.security.SecureRandom());

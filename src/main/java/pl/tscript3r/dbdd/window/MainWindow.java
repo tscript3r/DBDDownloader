@@ -1,13 +1,12 @@
 package pl.tscript3r.dbdd.window;
 
-import static pl.tscript3r.dbdd.utility.Logger.print;
-import static pl.tscript3r.dbdd.utility.Logger.setTextArea;
+import pl.tscript3r.dbdd.utility.DBDDownloader;
+import pl.tscript3r.dbdd.utility.Logger;
+import pl.tscript3r.dbdd.utility.SystemClipboard;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Toolkit;
+import javax.swing.*;
+import javax.swing.text.DefaultCaret;
+import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
@@ -18,20 +17,8 @@ import java.io.StringWriter;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.text.DefaultCaret;
-
-import pl.tscript3r.dbdd.utility.DBDDownloader;
-import pl.tscript3r.dbdd.utility.Logger;
-import pl.tscript3r.dbdd.utility.SystemClipboard;
+import static pl.tscript3r.dbdd.utility.Logger.print;
+import static pl.tscript3r.dbdd.utility.Logger.setTextArea;
 
 public class MainWindow {
 
@@ -47,9 +34,7 @@ public class MainWindow {
 
 	/**
 	 * Launch the application.
-	 * 
-	 * @throws NoSuchAlgorithmException
-	 * @throws KeyManagementException
+	 *
 	 */
 	public static void main(String[] args) {
 		
@@ -66,17 +51,11 @@ public class MainWindow {
 		
 	}
 
-	/**
-	 * Create the application.
-	 * 
-	 * @throws NoSuchAlgorithmException
-	 * @throws KeyManagementException
-	 */
-	public MainWindow() throws KeyManagementException, NoSuchAlgorithmException {
+	private MainWindow() {
 		initialize();
 	}
 
-	public static String getStackTrace(final Throwable throwable) {
+	private static String getStackTrace(final Throwable throwable) {
 		final StringWriter sw = new StringWriter();
 		final PrintWriter pw = new PrintWriter(sw, true);
 		throwable.printStackTrace(pw);
@@ -87,7 +66,7 @@ public class MainWindow {
 		return input.replace(" ", "");
 	}
 
-	private FocusAdapter getSpaceEraserLostFocusAdapter(JTextField textField) {
+	private FocusAdapter getSpaceEraserLostFocusAdapter(final JTextField textField) {
 		return new FocusAdapter() {
 			public void focusLost(FocusEvent e) {
 				textField.setText(spaceEraser(textField.getText()));
@@ -97,9 +76,7 @@ public class MainWindow {
 
 	/**
 	 * Initialise the contents of the frame.
-	 * 
-	 * @throws NoSuchAlgorithmException
-	 * @throws KeyManagementException
+	 *
 	 */
 	private void initialize() {
 		frmDbdd = new JFrame();
@@ -160,7 +137,7 @@ public class MainWindow {
 		JButton btnExecute = new JButton("Download DBD");
 		btnExecute.setBounds(10, 400, 412, 28);
 		panel.add(btnExecute);
-		Logger.setbExecute(btnExecute);
+		Logger.setButtonExecute(btnExecute);
 
 		JProgressBar progressBar = new JProgressBar();
 		progressBar.setBounds(10, 431, 412, 9);
@@ -171,7 +148,7 @@ public class MainWindow {
 		lblProject.setBounds(10, 114, 208, 23);
 		panel.add(lblProject);
 
-		JComboBox<String> comboBox = new JComboBox<String>(PROJECTS_SHORT_LIST);
+		final JComboBox<String> comboBox = new JComboBox<>(PROJECTS_SHORT_LIST);
 		comboBox.setBounds(10, 132, 412, 28);
 		panel.add(comboBox);
 

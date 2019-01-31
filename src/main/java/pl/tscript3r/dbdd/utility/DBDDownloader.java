@@ -1,14 +1,9 @@
 package pl.tscript3r.dbdd.utility;
 
-import static pl.tscript3r.dbdd.utility.AddressValidation.hostnameValide;
-import static pl.tscript3r.dbdd.utility.AddressValidation.ipAdressValidate;
-import static pl.tscript3r.dbdd.utility.FileIO.isExistingPath;
-import static pl.tscript3r.dbdd.utility.FileIO.isValidPath;
-import static pl.tscript3r.dbdd.utility.FileIO.savePage;
-import static pl.tscript3r.dbdd.utility.Logger.disableUI;
-import static pl.tscript3r.dbdd.utility.Logger.enableUI;
-import static pl.tscript3r.dbdd.utility.Logger.print;
-import static pl.tscript3r.dbdd.utility.Logger.updateProgressBar;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -17,11 +12,12 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.regex.Pattern;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import static pl.tscript3r.dbdd.utility.AddressValidation.hostnameValidate;
+import static pl.tscript3r.dbdd.utility.AddressValidation.ipAddressValidate;
+import static pl.tscript3r.dbdd.utility.FileIO.*;
+import static pl.tscript3r.dbdd.utility.Logger.*;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class DBDDownloader {
 
 	// Connection timeout expressed in seconds 
@@ -32,8 +28,8 @@ public class DBDDownloader {
 	private final String CONFIG_MENU_FILE = "Config";
 	private final String SUPPLIES_MENU = "Supplies Status";
 	private final String SUPPLIES_MENU_FILE = "Supplies";
-	private final String EVENTLOG_MENU = "Event Log";
-	private final String EVENTLOG_MENU_FILE = "EventLog";
+	private final String EVENT_LOG_MENU = "Event Log";
+	private final String EVENT_LOG_MENU_FILE = "EventLog";
 
 	private final String URL_PURE_PATTERN = "https://%s/";
 	private final String URL_PATTERN = "https://%s/hp/device/%s";
@@ -49,7 +45,7 @@ public class DBDDownloader {
 		OpenTrustManager.apply();
 	}
 
-	public Document downloadPage(String url) throws IOException {
+	private Document downloadPage(String url) throws IOException {
 		print("Downloading ", url);
 		return Jsoup.connect(url).userAgent("Mozilla/5.0 Chrome/26.0.1410.64 Safari/537.31").timeout(CONNECTION_TIMEOUT * 1000)
 				.followRedirects(true).maxBodySize(1024 * 1024 * 5).get();
@@ -70,8 +66,7 @@ public class DBDDownloader {
 	}
 
 	private String getTitle(Element element) {
-		String result = "";
-		result = element.select("a[href]").text();
+		String result = element.select("a[href]").text();
 		if (result.length() < 3)
 			result = element.select("a[href]").attr("title");
 		return result;
@@ -89,7 +84,7 @@ public class DBDDownloader {
 						configLink = element.select("a[href]").attr("href");
 					if (title.equals(SUPPLIES_MENU) || title.equals(SUPPLIES_MENU + " Page"))
 						suppliesLink = element.select("a[href]").attr("href");
-					if (title.equals(EVENTLOG_MENU) || title.equals(EVENTLOG_MENU + " Page"))
+					if (title.equals(EVENT_LOG_MENU) || title.equals(EVENT_LOG_MENU + " Page"))
 						eventLogLink = element.select("a[href]").attr("href");
 				}
 
@@ -118,7 +113,7 @@ public class DBDDownloader {
 	}
 
 	private void generateHostnameFileName() {
-		if (ipAdressValidate(hostname)) {
+		if (ipAddressValidate(hostname)) {
 			try {
 				InetAddress addr;
 				addr = InetAddress.getByName(hostname);
@@ -147,17 +142,13 @@ public class DBDDownloader {
 			enableUI();
 			return false;
 		}
-		if (!savePage(page, fullSavePath)) {
-			print("Error by saving ", fullSavePath);
-			enableUI();
-			return false;
-		}
+		savePage(page, fullSavePath);
 		updateProgressBar();
 		return true;
 	}
 
 	private Boolean validateInputData() {
-		if (!hostnameValide(hostname) && !ipAdressValidate(hostname)) {
+		if (!hostnameValidate(hostname) && !ipAddressValidate(hostname)) {
 			print("Hostname / IP is incorrect");
 			enableUI();
 			return false;
@@ -202,16 +193,12 @@ public class DBDDownloader {
 		if (parseIndex(indexPage)) {
 			updateProgressBar();
 			
-			if (!savePage(indexPage, generateSavePath(STATUS_MENU_FILE))) {
-				print("Error by saving status page");
-				enableUI();
-				return false;
-			}
+			savePage(indexPage, generateSavePath(STATUS_MENU_FILE));
 			updateProgressBar();
 
 			downloadAndSavePage(configLink, generateSavePath(CONFIG_MENU_FILE));
 			downloadAndSavePage(suppliesLink, generateSavePath(SUPPLIES_MENU_FILE));
-			downloadAndSavePage(eventLogLink, generateSavePath(EVENTLOG_MENU_FILE));
+			downloadAndSavePage(eventLogLink, generateSavePath(EVENT_LOG_MENU_FILE));
 
 			print("Pages saved successfully");
 			enableUI();

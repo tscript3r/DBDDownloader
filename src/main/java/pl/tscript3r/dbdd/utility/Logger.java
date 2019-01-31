@@ -1,8 +1,6 @@
 package pl.tscript3r.dbdd.utility;
 
-import javax.swing.JButton;
-import javax.swing.JProgressBar;
-import javax.swing.JTextArea;
+import javax.swing.*;
 
 public class Logger {
 
@@ -20,7 +18,7 @@ public class Logger {
 		Logger.progressBar = progressBar;
 	}
 
-	public static void setbExecute(JButton bExecute) {
+	public static void setButtonExecute(JButton bExecute) {
 		Logger.bExecute = bExecute;
 	}
 	
